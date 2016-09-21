@@ -1,2 +1,2 @@
-# vue-dynamic-animation
-dynamic  transition and animation for vue
+# vue-movie-clip
+Sequence of frames for vue.js
