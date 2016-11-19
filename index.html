@@ -125,11 +125,12 @@
 <body>
 
 
-<vue-movie-clip :playing.sync="playing" v-show="true" :frame-time="200" :loop="true" @frame="onFrame" @play="onPlay" @stop="onStop">
+<vue-movie-clip :playing.sync="playing" v-show="true" :frame-time="200" :frame.sync="frame" :loop="true" @frame="onFrame" @play="onPlay" @stop="onStop">
     <div v-for=" i in 10" class="pa lt_0 padding">{{i}}</div>
 </vue-movie-clip>
 <div style="margin-top: 100px" @click="playing=true">play</div>
 <div @click="playing=false">stop</div>
+<div @click="frame=frame+1">farme++</div>
 <script src="dist/vue.min.js"></script>
 <script src="dist/smart.min.js"></script>
 <script src="dist/vue-movie-clip.js"></script>
@@ -143,7 +144,7 @@
         components: {
             VueMovieClip: VueMovieClip
         },
-        data: {playing:true,
+        data: {playing:false,frame:1,
             page: 1, show: false, movies: [{current: 0.5}]
         },
         methods: {

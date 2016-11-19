@@ -58,25 +58,24 @@
                 if (val < 1 || val > this.totalFrame) {
                     return false
                 }
-                var visible = {};
-                this.frame = val;
+                //this.frame = val;
                 Css.css(this.$el.children[this.lastFrame - 1], hide);
                 Css.css(this.$el.children[this.frame - 1], show);
                 this.lastFrame = val;
                 this.$emit('frame', this);
             },
             nextFrame: function () {
-
                 if (this.frame == this.totalFrame) {
                     if (this.loop == false) {
                         this.stop();
                         return;
                     } else {
-                        this.updateFrame(1);
+                        // this.updateFrame(1);
+                        this.frame = 1
                     }
-
                 } else {
-                    this.updateFrame(this.frame + 1);
+                    // this.updateFrame(this.frame + 1);
+                    this.frame = this.frame + 1
                 }
 
                 if (this.frame == this.totalFrame) {
@@ -85,15 +84,17 @@
                     }
                 }
                 if (this.playing) {
-                    this.play();
+                    this.autoNext();
                 }
             },
-            play: function () {
+            autoNext: function () {
                 clearTimeout(this.iv);
-                this.playing = true;
                 this.iv = setTimeout(this.nextFrame, this.frameTime);
-
-
+            },
+            play: function () {
+                this.playing = true;
+                this.autoNext();
+                this.$emit('play', this);
             },
             stop: function () {
                 clearTimeout(this.iv);
@@ -105,25 +106,31 @@
         watch: {
             playing: function (val, oldVal) {
 
-              if(val){
-                  this.play();
-                  this.$emit('play', this);
-              }else{
-                  this.stop();
-              }
+                if (val) {
+                    this.play();
+
+                } else {
+                    this.stop();
+                }
+
+            }, frame: function (val, oldVal) {
+                if (val != oldVal) {
+                    if (val > 0 && val < this.totalFrame) {
+                        this.updateFrame(val);
+                    } else {
+                        return false;
+                    }
+                }
 
             }
         },
         computed: {},
-
-
         ready: function () {
             _.each(this.$el.children, function (el) {
                 Css.smartCss(el, hide);
             });
             this.totalFrame = this.$el.children.length;
             this.updateFrame(this.frame);
-
             if (this.playing) {
                 this.play();
             }
