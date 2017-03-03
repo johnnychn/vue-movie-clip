@@ -55,14 +55,16 @@
         },
         methods: {
             updateFrame: function (val) {
-                if (val < 1 || val > this.totalFrame) {
-                    return false
+                if (this.$el) {
+                    if (val < 1 || val > this.totalFrame) {
+                        return false
+                    }
+                    //this.frame = val;
+                    Css.css(this.$el.children[this.lastFrame - 1], hide);
+                    Css.css(this.$el.children[this.frame - 1], show);
+                    this.lastFrame = val;
+                    this.$emit('frame', this);
                 }
-                //this.frame = val;
-                Css.css(this.$el.children[this.lastFrame - 1], hide);
-                Css.css(this.$el.children[this.frame - 1], show);
-                this.lastFrame = val;
-                this.$emit('frame', this);
             },
             nextFrame: function () {
                 if (this.frame == this.totalFrame) {
@@ -129,7 +131,7 @@
             _.each(this.$el.children, function (el) {
                 Css.smartCss(el, hide);
             });
-            this.totalFrame = this.$el.children.length;
+            this.totalFrame = this.$el.children.length+1;
             this.updateFrame(this.frame);
             if (this.playing) {
                 this.play();
