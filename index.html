@@ -8,6 +8,8 @@
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <script src="http://cdnst.immomo.com/momofes/js/mobile/momo_bridge.2.0.4.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <style>
 
@@ -19,6 +21,7 @@
         font-family: 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', sans-serif;
 
     }
+
     .btn {
         padding: 10px 20px 10px 20px;
         background: #2b81af;
@@ -28,16 +31,19 @@
         cursor: pointer;
         -webkit-user-select: none;
     }
-    .btn:hover{
+
+    .btn:hover {
         padding: 10px 20px 10px 20px;
-        background:#ff0000;
+        background: #ff0000;
 
     }
+
 
 </style>
 <body>
 <div id="app">
-    <vue-movie-clip :width="width" :height="360" type="canvas" v-show="true" :playing="playing" :frame-time="50" :frame="frame" :frames="frames"
+    <vue-movie-clip :width="width" :height="360" type="canvas" v-show="true" :playing="playing" :frame-time="50"
+                    :frame="frame" :frames="frames"
                     :loop="true" @frame="onFrame" @play="onPlay" @stop="onStop">
 
     </vue-movie-clip>
@@ -50,12 +56,13 @@
 <script src="dist/vue-movie-clip.js"></script>
 <script>
 
+
     function PrefixInteger(num, n) {
         return (Array(n).join(0) + num).slice(-n);
     }
-    var frames=[];
-    for(var i=1;i<220;i++){
-        frames.push('img/video/'+PrefixInteger(i,5)+'.jpg')
+    var frames = [];
+    for (var i = 1; i < 220; i++) {
+        frames.push('img/video/' + PrefixInteger(i, 5) + '.jpg')
     }
 
     new Vue({
@@ -64,15 +71,15 @@
             VueMovieClip: VueMovieClip
         },
         data: {
-            playing: true,frame:5,frames:frames,width:640,
+            playing: true, frame: 5, frames: frames, width: 640,
             page: 1, show: false, movies: [{current: 0.5}]
         },
         methods: {
 
             onFrame: function (mc) {
-                this.frame=mc.frame;
-              // this.width=640-this.frame;
-               // console.log(mc.frame)
+                this.frame = mc.frame;
+                // this.width=640-this.frame;
+                // console.log(mc.frame)
             },
             onPlay: function (mc) {
                 console.log('play')

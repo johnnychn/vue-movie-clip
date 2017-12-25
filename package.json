@@ -3,7 +3,7 @@
   "description": "Assets loader for vue",
   "author": "johnnyGoo <157781745@qq.com>",
   "scripts": {
-    "dev": "webpack-dev-server --inline --hot --port 8999",
+    "dev": "webpack-dev-server --inline --hot --host 192.168.1.105 --port 8999",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
