@@ -95,8 +95,9 @@
         top: 0px;
         position: absolute;
     }
-    .padding{
-       padding:  10px;
+
+    .padding {
+        padding: 10px;
         background: #f0f0f0;
     }
 
@@ -123,39 +124,47 @@
 
 </style>
 <body>
+<div id="app">
+    <vue-movie-clip :width="width" :height="360" type="canvas" v-show="true" :playing="playing" :frame-time="50" :frame="frame" :frames="frames"
+                    :loop="true" @frame="onFrame" @play="onPlay" @stop="onStop">
 
-
-<vue-movie-clip :playing.sync="playing" v-show="true" :frame-time="200" :frame.sync="frame" :loop="true" @frame="onFrame" @play="onPlay" @stop="onStop">
-    <div v-for=" i in 10" class="pa lt_0 padding">{{i}}</div>
-</vue-movie-clip>
-<div style="margin-top: 100px" @click="playing=true">play</div>
-<div @click="playing=false">stop</div>
-<div @click="frame=frame+1">farme++</div>
-<script src="dist/vue.min.js"></script>
-<script src="dist/smart.min.js"></script>
+    </vue-movie-clip>
+    <div style="margin-top: 100px" @click="playing=true">play</div>
+    <div @click="playing=false">stop</div>
+    <div @click="frame=frame+1">farme++</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="dist/vue-movie-clip.js"></script>
-
 <script>
 
-    Smart.Css.createSmartCssStyle('.blur', {filter: 'blur(0px);'});
-    // Smart.Css.smartCss(document.querySelector('.blur'),{filter:'blur(10px);',width:'100%'});
+    function PrefixInteger(num, n) {
+        return (Array(n).join(0) + num).slice(-n);
+    }
+    var frames=[];
+    for(var i=1;i<220;i++){
+        frames.push('img/video/'+PrefixInteger(i,5)+'.jpg')
+    }
+
     new Vue({
-        el: 'body',
+        el: '#app',
         components: {
             VueMovieClip: VueMovieClip
         },
-        data: {playing:false,frame:1,
+        data: {
+            playing: true,frame:5,frames:frames,width:640,
             page: 1, show: false, movies: [{current: 0.5}]
         },
         methods: {
 
-            onFrame:function (mc) {
-                console.log(mc.frame)
+            onFrame: function (mc) {
+                this.frame=mc.frame;
+              // this.width=640-this.frame;
+               // console.log(mc.frame)
             },
-            onPlay:function (mc) {
+            onPlay: function (mc) {
                 console.log('play')
             },
-            onStop:function (mc) {
+            onStop: function (mc) {
                 console.log('stop')
             }
         }

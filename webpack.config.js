@@ -2,26 +2,23 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-  entry: './src/VueMovieClip.vue',
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    library: 'VueMovieClip',
     libraryTarget: 'umd',
     filename: 'vue-movie-clip.js'
   },
-  resolveLoader: {
-    root: path.join(__dirname, 'node_modules'),
-  },
+
   module: {
     loaders: [
       {
         test: /\.vue$/,
-        loader: 'vue'
+        loader: 'vue-loader'
       },
       {
         test: /\.js$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         exclude: /node_modules/
       },
       {
@@ -57,12 +54,12 @@ if (process.env.NODE_ENV === 'production') {
       'process.env': {
         NODE_ENV: '"production"'
       }
-    }),
+    }), new webpack.IgnorePlugin(/underscore$/),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
       }
     }),
-    new webpack.optimize.OccurenceOrderPlugin()
+    new webpack.optimize.OccurrenceOrderPlugin()
   ])
 }
