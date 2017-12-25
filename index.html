@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>VueLoader</title>
+    <title>VueMovieClip</title>
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1, user-scalable=no">
@@ -10,67 +10,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
 <style>
-    .btn {
-        width: 40%;
-        height: 200px;
-        background: #2b81af;
-        color: #fff;
-        line-height: 200px;
-        text-align: center;
-        float: left;
-        margin-left: 20px;
-    }
-
-    .btn:hover {
-        background: #006600;
-        color: #fff;
-    }
-
-    .banner {
-        color: #fff;
-        background: #000;
-        position: relative;
-    }
-
-    /*.banner:nth-child(3n) {*/
-    /*background: skyblue;*/
-    /*}*/
-
-    /*.banner:nth-child(3n+1) {*/
-    /*background: rosybrown;*/
-    /*}*/
-
-    /*.banner:nth-child(3n+2) {*/
-    /*background: yellowgreen;*/
-    /*}*/
-
-    .title {
-
-        font-size: 30px;
-        text-align: left;
-        margin-top: 20px;
-        z-index: 10;
-        position: relative;
-        margin-left: 20px;
-    }
-
-    .content {
-
-        font-size: 14px;
-        text-align: left;
-        margin-top: 5px;
-        z-index: 10;
-        position: relative;
-        margin-left: 20px;
-    }
-
-    .blue {
-        color: #0086b3;
-    }
-
-    img {
-        width: 100%;
-    }
 
     body, html {
         padding: 0px;
@@ -80,46 +19,19 @@
         font-family: 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', sans-serif;
 
     }
-
-    [v-show] {
-        display: none;
+    .btn {
+        padding: 10px 20px 10px 20px;
+        background: #2b81af;
+        color: #fff;
+        float: left;
+        margin: 5px;
+        cursor: pointer;
+        -webkit-user-select: none;
     }
+    .btn:hover{
+        padding: 10px 20px 10px 20px;
+        background:#ff0000;
 
-    .full {
-        width: 100%;
-        height: 100%;
-    }
-
-    .lt_0 {
-        left: 0px;
-        top: 0px;
-        position: absolute;
-    }
-
-    .padding {
-        padding: 10px;
-        background: #f0f0f0;
-    }
-
-    /*.blur {*/
-    /*-webkit-filter: blur(10px); !* Chrome, Opera *!*/
-    /*-moz-filter: blur(10px);*/
-    /*-ms-filter: blur(10px);*/
-    /*filter: blur(10px);*/
-
-    /*filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false); !* IE6~IE9 *!*/
-    /*}*/
-
-    .loader {
-        position: absolute;
-        z-index: 100;
-        left: 0px;
-        top: 0px;
-        width: 100%;
-        height: 100%;
-        background: #000;
-        overflow: hidden;
-        display: block;
     }
 
 </style>
@@ -129,9 +41,10 @@
                     :loop="true" @frame="onFrame" @play="onPlay" @stop="onStop">
 
     </vue-movie-clip>
-    <div style="margin-top: 100px" @click="playing=true">play</div>
-    <div @click="playing=false">stop</div>
-    <div @click="frame=frame+1">farme++</div>
+    <div class="btn" @click="playing=true">play</div>
+    <div class="btn" @click="playing=false">stop</div>
+    <div class="btn" @click="frame=frame+1">frame++</div>
+    <div class="btn" @click="frame=frame-1">frame--</div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="dist/vue-movie-clip.js"></script>
