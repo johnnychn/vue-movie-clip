@@ -26,6 +26,10 @@
         name: 'vue-movie-clip',
         // 声明 props
         props: {
+            forward: {
+                type: Boolean,
+                default: true
+            },
             frameTime: {
                 type: Number,
                 default: 50
@@ -34,11 +38,11 @@
                 type: Boolean,
                 default: true
             },
-            playing: {
+            autoPlay: {
                 type: Boolean,
                 default: true
             },
-            frame: {
+            initFrame: {
                 type: Number,
                 default: 1
             },
@@ -51,12 +55,18 @@
                 type: Array
             }
             ,
-            width: {},
-            height: {}
+            width: {
+                type: Number,
+                default: 640
+            },
+            height: {
+                type: Number,
+                default: 320
+            }
         },
         data: function () {
             return {
-                lastFrame: 1, iv: 0, totalFrame: 0,ctx:null,canvas:null,images:[]
+                playing: false, lastFrame: 1, frame: 0, iv: 0, totalFrame: 0, ctx: null, canvas: null, images: []
             }
         },
         methods: {
@@ -71,53 +81,64 @@
                             this.$el.children[0].children[this.frame - 1].style.setProperty('display', 'block');
                             break;
                         case 'canvas':
-                            let img=this.images[this.frame - 1];
-                            this.ctx.drawImage(img,0,0,this.width,this.height);
+                            let img = this.images[this.frame - 1];
+                            this.ctx.drawImage(img, 0, 0, this.width, this.height);
                             break;
                     }
-
                     this.lastFrame = val;
                     this.$emit('frame', this);
                 }
             },
             nextFrame: function () {
-                if (this.frame < this.totalFrame) {
-                    if (this.frame === this.totalFrame - 1) {
-                        if (this.loop === false) {
-                            this.frame = this.frame + 1;
-                            this.playing = false;
 
-
-                        } else {
-                            this.frame = this.frame + 1;
-                            this.autoNext();
-                        }
+                if (this.forward === true) {
+                    this.goFixFrame(this.frame + 1)
+                    if (this.frame === this.totalFrame && this.loop === false) {
+                        this.stop();
                     } else {
-                        this.frame = this.frame + 1;
                         this.autoNext();
                     }
-
                 } else {
-                    if (this.loop === true) {
-                        this.frame = 1;
+                    this.goFixFrame(this.frame - 1)
+                    if (this.frame === 1 && this.loop === false) {
+                        this.stop();
+                    } else {
                         this.autoNext();
                     }
                 }
 
 
             },
+            goFixFrame: function (frame) {
+                while (frame < 1) {
+                    frame = frame + this.totalFrame;
+                }
+                while (frame > this.totalFrame) {
+                    frame = frame - this.totalFrame;
+                }
+                this.frame = frame;
+            },
+            setFrameTime: function (time) {
+                if (time >= 0) {
+                    this.frameTime = time;
+                }
+            },
+            skipTo: function (frame) {
+                this.goFixFrame(frame);
+
+            },
             autoNext: function () {
                 clearTimeout(this.iv);
-
                 this.iv = setTimeout(this.nextFrame, this.frameTime);
             },
             play: function () {
-
-                this.autoNext();
+                this.playing = true;
+                this.nextFrame();
                 this.$emit('play', this);
 
             },
             stop: function () {
+                this.playing = false;
                 clearTimeout(this.iv);
                 this.$emit('stop', this);
             }
@@ -125,22 +146,12 @@
 
         watch: {
             width: function (val, oldVal) {
-                this.canvas.width=this.width;
+                this.canvas.width = this.width;
                 this.updateFrame(this.frame)
             },
             height: function (val, oldVal) {
-                this.canvas.height=this.height;
+                this.canvas.height = this.height;
                 this.updateFrame(this.frame)
-            },
-            playing: function (val, oldVal) {
-                if (true === val) {
-                    this.play();
-                } else {
-                    this.stop();
-
-                }
-
-
             }, frame: function (val, oldVal) {
                 if (val !== oldVal) {
                     if (val > 0 && val <= this.totalFrame) {
@@ -154,7 +165,10 @@
         },
 
         mounted: function () {
+            let self = this;
             this.totalFrame = this.frames.length;
+            this.frame = this.initFrame;
+
             switch (this.type) {
                 case 'dom':
                     for (let i = 0; i < this.$el.children[0].children.length; i++) {
@@ -162,21 +176,30 @@
                     }
                     break;
                 case 'canvas':
-                    this.canvas=this.$el.children[0];
-                    this.canvas.width=this.width;
-                    this.canvas.height=this.height;
-                    this.ctx=this.canvas.getContext("2d");
-                    for(let i=0;i<this.totalFrame;i++){
+                    this.canvas = this.$el.children[0];
+                    this.canvas.width = this.width;
+                    this.canvas.height = this.height;
+                    this.ctx = this.canvas.getContext("2d");
+                    for (let i = 0; i < this.totalFrame; i++) {
                         let img = new Image();
-                        img.src=this.frames[i];
+                        img.src = this.frames[i];
                         this.images.push(img)
                     }
-
+                    this.images[this.initFrame - 1].onload = function () {
+                        if (self.frame === self.initFrame && this.playing !== true) {
+                            self.updateFrame(self.initFrame);
+                        }
+                    };
 
                     break
             }
-            this.updateFrame(this.frame);
-            if (this.playing) {
+
+
+            self.updateFrame(self.initFrame);
+
+
+            //  this.updateFrame(this.frame);
+            if (this.autoPlay) {
                 this.play();
             }
 
