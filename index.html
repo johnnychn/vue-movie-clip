@@ -22,6 +22,11 @@
 
     }
 
+    #app,.full {
+        width: 100%;
+        height: 100%;
+    }
+
     .btn {
         padding: 5px 10px 5px 10px;
         background: #2b81af;
@@ -37,38 +42,55 @@
         background: #ff0000;
 
     }
+    .pa{
+        position: absolute;
+        bottom:0px;
+        left: 0px;
+        width: 100%;
+        height: 140px;
+        color: #fff;
+    }
 
 
 </style>
 <body>
 <div id="app">
-    <vue-movie-clip ref="my_movieclip" :auto-play="true" :init-frame="10" :width="width"
-                    :height="360" type="dom" v-show="true" :frame-time="frameTime"
-                    :frame="frame" :frames="frames"
-                    :loop="loop" :forward="forward"
-                    @frame="onFrame" @play="onPlay" @stop="onStop">
-
-    </vue-movie-clip>
-
-    <div style="height: 20px">
-        <div style="float: left;padding-left: 10px;width:110px;">frame:</div>
-        <vue-slider style="float: left" ref="slider" :speed="0" v-model="frame" tooltip="hover" @callback="sliderCallback"
-                    :width="width-120" :max="frames.length"></vue-slider>
+    <div class="full">
+        <vue-fix-dom width="640px" height="360px" align="crop">
+            <vue-movie-clip ref="my_movieclip" :auto-play="true" :init-frame="10" width="640px"
+                            height="360px" type="canvas" v-show="true" :frame-time="frameTime"
+                            :frame="frame" :frames="frames"
+                            :loop="loop" :forward="forward"
+                            @frame="onFrame" @play="onPlay" @stop="onStop">
+            </vue-movie-clip>
+        </vue-fix-dom>
     </div>
-    <div style="height: 20px;clear: both">
-        <div style="float: left;padding-left: 10px;width:110px">frameTime:</div>
-        <vue-slider style="float: left" ref="slider2" v-model="frameTime" tooltip="hover"
-                    :width="width-120" :max="100"></vue-slider>
+    <div class="pa">
+
+
+
+    <div style="height: 45px">
+        <div style="padding-left: 10px;width:110px;">frame:</div>
+        <vue-slider style="" ref="slider" :speed="0" v-model="frame" tooltip="hover"
+                    @callback="sliderCallback"
+                     :width="360"  :max="frames.length"></vue-slider>
+    </div>
+    <div style="height: 45px;clear: both">
+        <div style="padding-left: 10px;width:110px">frameTime:</div>
+        <vue-slider  ref="slider2" v-model="frameTime" tooltip="hover"
+                    :width="360"   :max="100"></vue-slider>
     </div>
     <div style="clear: both">
         <div class="btn" @click="switchState()">{{state}}</div>
         <div class="btn" @click="switchLoop()">loop:{{loop}}</div>
         <div class="btn" @click="switchForward()">forward:{{forward}}</div>
     </div>
+    </div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="dist/slider.js"></script>
+<script src="node_modules/vue-fix-dom/dist/vue-fix-dom.js"></script>
 <script src="dist/vue-movie-clip.js"></script>
 <script>
 
@@ -76,6 +98,7 @@
     function PrefixInteger(num, n) {
         return (Array(n).join(0) + num).slice(-n);
     }
+
     let frames = [];
     for (let i = 1; i < 220; i++) {
         frames.push('img/video/' + PrefixInteger(i, 5) + '.jpg')
@@ -84,10 +107,10 @@
     new Vue({
         el: '#app',
         components: {
-            VueMovieClip: VueMovieClip, vueSlider: window['vue-slider-component']
+            VueMovieClip: VueMovieClip, vueSlider: window['vue-slider-component'], VueFixDom: VueFixDom
         },
         data: {
-            frame: 5, frames: frames, width: 640, frameTime: 20, state: 'stop',loop:true,forward:true,
+            frame: 5, frames: frames, frameTime: 20, state: 'stop', loop: true, forward: true,
             page: 1, show: false, movies: [{current: 0.5}]
         },
         methods: {
@@ -95,9 +118,9 @@
                 this.$refs.my_movieclip.skipTo(value);
             },
             switchLoop: function () {
-                this.loop=! this.loop
-            },  switchForward: function () {
-                this.forward=! this.forward
+                this.loop = !this.loop
+            }, switchForward: function () {
+                this.forward = !this.forward
             },
             switchState: function () {
                 if (this.$refs.my_movieclip.playing) {

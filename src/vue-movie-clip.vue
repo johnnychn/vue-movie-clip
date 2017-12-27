@@ -1,13 +1,10 @@
 <template>
-    <div>
-        <div v-if="type==='dom'" :style="{width:width+'px',height:height+'px'}">
-            <img v-for="(val,key) in frames" :src="val"/>
+    <div >
+        <div v-if="type==='dom'" :style="{width:width,height:height}">
+            <img v-for="(val,key) in frames" :width="width" :height="height" :src="val"/>
         </div>
-        <canvas :style="{width:width+'px',height:height+'px'}" v-if="type==='canvas'">
-
+        <canvas :style="{width:width,height:height}" v-if="type==='canvas'">
         </canvas>
-
-
     </div>
 </template>
 
@@ -19,6 +16,10 @@
 * Copyright 2013-2016 Johnny chen
 */
 <script>
+
+function parseInt(str) {
+    return Number(str.replace('px', ''));
+}
 
 
     // 注册
@@ -56,17 +57,18 @@
             }
             ,
             width: {
-                type: Number,
-                default: 640
+                type: String,
+                default: '640px'
             },
             height: {
-                type: Number,
-                default: 320
+                type: String,
+                default: '360px'
             }
         },
         data: function () {
             return {
-                playing: false, lastFrame: 1, frame: 0, iv: 0, totalFrame: 0, ctx: null, canvas: null, images: []
+                playing: false, lastFrame: 1, frame: 0, iv: 0, totalFrame: 0, ctx: null, canvas: null, images: [],
+                __width:0,__height:0
             }
         },
         methods: {
@@ -82,7 +84,7 @@
                             break;
                         case 'canvas':
                             let img = this.images[this.frame - 1];
-                            this.ctx.drawImage(img, 0, 0, this.width, this.height);
+                            this.ctx.drawImage(img, 0, 0, this.__width, this.__height);
                             break;
                     }
                     this.lastFrame = val;
@@ -146,11 +148,13 @@
 
         watch: {
             width: function (val, oldVal) {
-                this.canvas.width = this.width;
+                this.__width=parseInt(val);
+                this.canvas.width = this.__width;
                 this.updateFrame(this.frame)
             },
             height: function (val, oldVal) {
-                this.canvas.height = this.height;
+                this.__height=parseInt(val);
+                this.canvas.height = this.__height;
                 this.updateFrame(this.frame)
             }, frame: function (val, oldVal) {
                 if (val !== oldVal) {
@@ -168,6 +172,8 @@
             let self = this;
             this.totalFrame = this.frames.length;
             this.frame = this.initFrame;
+            this.__width=parseInt(this.width);
+            this.__height=parseInt(this.height);
 
             switch (this.type) {
                 case 'dom':
@@ -177,8 +183,8 @@
                     break;
                 case 'canvas':
                     this.canvas = this.$el.children[0];
-                    this.canvas.width = this.width;
-                    this.canvas.height = this.height;
+                    this.canvas.width = this.__width;
+                    this.canvas.height = this.__height;
                     this.ctx = this.canvas.getContext("2d");
                     for (let i = 0; i < this.totalFrame; i++) {
                         let img = new Image();
