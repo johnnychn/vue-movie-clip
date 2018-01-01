@@ -1,9 +1,9 @@
 <template>
     <div >
-        <div v-if="type==='dom'" :style="{width:width,height:height}">
+        <div ref="dom" v-if="type==='dom'" :style="{width:width,height:height}">
             <img v-for="(val,key) in frames" :width="width" :height="height" :src="val"/>
         </div>
-        <canvas :style="{width:width,height:height}" v-if="type==='canvas'">
+        <canvas ref="canvas" :style="{width:width,height:height}" v-if="type==='canvas'">
         </canvas>
     </div>
 </template>
@@ -84,6 +84,7 @@ function parseInt(str) {
                             break;
                         case 'canvas':
                             let img = this.images[this.frame - 1];
+                            this.ctx.clearRect( 0, 0, this.__width, this.__height);
                             this.ctx.drawImage(img, 0, 0, this.__width, this.__height);
                             break;
                     }
@@ -175,14 +176,15 @@ function parseInt(str) {
             this.__width=parseInt(this.width);
             this.__height=parseInt(this.height);
 
+
             switch (this.type) {
                 case 'dom':
-                    for (let i = 0; i < this.$el.children[0].children.length; i++) {
-                        this.$el.children[0].children[i].style.setProperty('display', 'none');
+                    for (let i = 0; i < this.$refs.dom.children.length; i++) {
+                        this.$refs.dom.children[i].style.setProperty('display', 'none');
                     }
                     break;
                 case 'canvas':
-                    this.canvas = this.$el.children[0];
+                    this.canvas = this.$refs.canvas;
                     this.canvas.width = this.__width;
                     this.canvas.height = this.__height;
                     this.ctx = this.canvas.getContext("2d");

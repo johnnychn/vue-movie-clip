@@ -2,17 +2,17 @@
   "name": "vue-movie-clip",
   "description": "MovieClip for Vue, render by dom or canvas",
   "author": "johnnyGoo <157781745@qq.com>",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "main": "dist/vue-movie-clip.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --hot --host 192.168.1.105 --port 8999",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "underscore": "^1.7.0",
-    "vue-fix-dom": "^1.0.1"
   },
   "devDependencies": {
+    "underscore": "^1.7.0",
+    "vue-fix-dom": "^1.0.1",
     "vue": "^2.5.2",
     "cross-env": "^5.1.3",
     "autoprefixer": "^7.1.2",

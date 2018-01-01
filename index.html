@@ -58,7 +58,7 @@
     <div class="full">
         <vue-fix-dom width="640px" height="360px" align="crop">
             <vue-movie-clip ref="my_movieclip" :auto-play="true" :init-frame="10" width="640px"
-                            height="360px" type="canvas" v-show="true" :frame-time="frameTime"
+                            height="360px" type="dom" v-show="true" :frame-time="frameTime"
                             :frame="frame" :frames="frames"
                             :loop="loop" :forward="forward"
                             @frame="onFrame" @play="onPlay" @stop="onStop">
