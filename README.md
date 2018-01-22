@@ -25,7 +25,7 @@ width:String "640px"/"*px"
 height:String "360px"/"*px"
 type:String "canvas"/"dom"
 autoPlay:Boolean true/false
-frameTime:Number 50/(1-100) 
+frameTime:Number 50/(1+) 
 frames:Array []/['xxx.jpg']
 loop:Boolean true/false
 forward:Boolean true/false
