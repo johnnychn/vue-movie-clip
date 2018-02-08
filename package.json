@@ -2,7 +2,7 @@
   "name": "vue-movie-clip",
   "description": "MovieClip for Vue, render by dom or canvas",
   "author": "johnnyGoo <157781745@qq.com>",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "dist/vue-movie-clip.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --hot --host 192.168.1.105 --port 8999",

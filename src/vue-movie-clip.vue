@@ -52,8 +52,8 @@
                 default: 50
             },
             loop: {
-                type: Boolean,
-                default: true
+                type: Number,
+                default: 1
             },
             autoPlay: {
                 type: Boolean,
@@ -84,7 +84,7 @@
         data: function () {
             return {
                 playing: false, lastFrame: 1, frame: 0, iv: 0, totalFrame: 0, ctx: null, canvas: null, images: [],
-                __width: 0, __height: 0, webgl: null, program: null
+                __width: 0, __height: 0, webgl: null, program: null, __count: 0
             }
         },
         methods: {
@@ -102,9 +102,11 @@
                             let img = this.images[this.frame - 1];
                             if (img.complete) {
                                 this.ctx.clearRect(0, 0, this.__width, this.__height);
-                                this.ctx.drawImage(img, 0, 0, this.__width, this.__height);
+                                // this.ctx.strokeRect(0, 0, this.__width, this.__height);
+                                if (img.height > 0) {
+                                    this.ctx.drawImage(img, 0, 0, this.__width, this.__height);
+                                }
                             }
-
                             break;
                     }
                     this.lastFrame = val;
@@ -113,17 +115,29 @@
             },
             nextFrame: function () {
 
+
                 if (this.forward === true) {
                     this.goFixFrame(this.frame + 1)
-                    if (this.frame === this.totalFrame && this.loop === false) {
-                        this.stop();
+                    if (this.frame === this.totalFrame) {
+                        this.__count++
+                        if (this.loop === this.__count) {
+                            this.stop();
+                        } else {
+                            this.autoNext();
+                        }
                     } else {
+
                         this.autoNext();
                     }
                 } else {
                     this.goFixFrame(this.frame - 1)
-                    if (this.frame === 1 && this.loop === false) {
-                        this.stop();
+                    if (this.frame === 1) {
+                        this.__count++
+                        if (this.loop === this.__count) {
+                            this.stop();
+                        } else {
+                            this.autoNext();
+                        }
                     } else {
                         this.autoNext();
                     }
@@ -154,6 +168,7 @@
                 this.iv = setTimeout(this.nextFrame, this.frameTime);
             },
             play: function () {
+                this.__count = 0;
                 this.playing = true;
                 this.nextFrame();
                 this.$emit('play', this);
@@ -162,6 +177,7 @@
             stop: function () {
                 this.playing = false;
                 clearTimeout(this.iv);
+
                 this.$emit('stop', this);
             }
         },
@@ -195,6 +211,7 @@
             this.frame = this.initFrame;
             this.__width = parseInt(this.width);
             this.__height = parseInt(this.height);
+            this.__count = 0
 
             if (this.type === 'canvas' && !canvas) {
                 this.type = 'dom'
@@ -221,6 +238,7 @@
                     for (let i = 0; i < this.totalFrame; i++) {
                         let img = new Image();
                         img.src = this.frames[i];
+                        img.crossOrigin = "Anonymous";
                         this.images.push(img)
                     }
 

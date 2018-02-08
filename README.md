@@ -27,7 +27,7 @@ type:String "canvas"/"dom"
 autoPlay:Boolean true/false
 frameTime:Number 50/(1+) 
 frames:Array []/['xxx.jpg']
-loop:Boolean true/false
+loop:Number 1/  -1 loop
 forward:Boolean true/false
 ```
 

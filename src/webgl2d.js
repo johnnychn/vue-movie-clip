@@ -298,7 +298,7 @@ var WebGL2D = this.WebGL2D = function WebGL2D(canvas, options) {
                 gl.viewport(0, 0, gl2d.canvas.width, gl2d.canvas.height);
 
                 // Default white background
-                gl.clearColor(1, 1, 1, 1);
+                gl.clearColor(1, 1, 1, 0.5);
                 gl.clear(gl.COLOR_BUFFER_BIT); // | gl.DEPTH_BUFFER_BIT);
 
                 // Disables writing to dest-alpha
@@ -811,7 +811,7 @@ WebGL2D.prototype.initCanvas2DAPI = function initCanvas2DAPI() {
 
     // WebGL requires colors as a vector while Canvas2D sets colors as an rgba string
     // These getters and setters store the original rgba string as well as convert to a vector
-    drawState.fillStyle = [0, 0, 0, 1]; // default black
+    drawState.fillStyle = [0, 0, 0, 0]; // default black
 
     Object.defineProperty(gl, "fillStyle", {
         get: function () {
@@ -1077,6 +1077,10 @@ WebGL2D.prototype.initCanvas2DAPI = function initCanvas2DAPI() {
     };
 
     gl.fillRect = function fillRect(x, y, width, height) {
+        this.__fillRect(x,y,width,height,0,0,0,0)
+
+    };
+    gl.__fillRect=function (x, y, width, height,r,g,b,a) {
         var transform = gl2d.transform;
         var shaderProgram = gl2d.initShaders(transform.c_stack + 2, 0);
 
@@ -1090,35 +1094,20 @@ WebGL2D.prototype.initCanvas2DAPI = function initCanvas2DAPI() {
 
         sendTransformStack(shaderProgram);
 
-        gl.uniform4f(shaderProgram.uColor, drawState.fillStyle[0], drawState.fillStyle[1], drawState.fillStyle[2], drawState.fillStyle[3]);
+        gl.uniform4f(shaderProgram.uColor, r, g, b, a);
 
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
         transform.popMatrix();
-    };
+
+    }
 
     gl.strokeRect = function strokeRect(x, y, width, height) {
-        var transform = gl2d.transform;
-        var shaderProgram = gl2d.initShaders(transform.c_stack + 2, 0);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, gl.rectVertexPositionBuffer);
-        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 4, gl.FLOAT, false, 0, 0);
-
-        transform.pushMatrix();
-
-        transform.translate(x, y);
-        transform.scale(width, height);
-
-        sendTransformStack(shaderProgram);
-
-        gl.uniform4f(shaderProgram.uColor, drawState.strokeStyle[0], drawState.strokeStyle[1], drawState.strokeStyle[2], drawState.strokeStyle[3]);
-
-        gl.drawArrays(gl.LINE_LOOP, 0, 4);
-
-        transform.popMatrix();
+        this.__fillRect(x,y,width,height,0,0,0,1)
     };
 
     gl.clearRect = function clearRect(x, y, width, height) {
+        this.__fillRect(x,y,width,height,0,0,0,0)
     };
 
     var subPaths = [];
