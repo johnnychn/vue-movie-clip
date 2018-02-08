@@ -1,7 +1,8 @@
 <template>
-    <div >
+    <div>
         <div ref="dom" v-if="type==='dom'" :style="{width:width,height:height}">
-            <img v-for="(val,key) in frames" :width="width" :height="height" :src="val"/>
+            <img v-for="(val,key) in frames" :width="val.length>1?width:0" :height="val.length>1?height:0" v-show=""
+                 :src="val"/>
         </div>
         <canvas ref="canvas" :style="{width:width,height:height}" v-if="type==='canvas'">
         </canvas>
@@ -16,10 +17,25 @@
 * Copyright 2013-2016 Johnny chen
 */
 <script>
+    import WebGL2D from './webgl2d'
 
-function parseInt(str) {
-    return Number(str.replace('px', ''));
-}
+    let canvas = !!window.CanvasRenderingContext2D
+
+    let webgl = (function () {
+        try {
+
+            var canvas = document.createElement('canvas');
+            return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+        } catch (e) {
+            return false;
+        }
+
+    })()
+
+
+    function parseInt(str) {
+        return Number(str.replace('px', ''));
+    }
 
 
     // 注册
@@ -68,7 +84,7 @@ function parseInt(str) {
         data: function () {
             return {
                 playing: false, lastFrame: 1, frame: 0, iv: 0, totalFrame: 0, ctx: null, canvas: null, images: [],
-                __width:0,__height:0
+                __width: 0, __height: 0, webgl: null, program: null
             }
         },
         methods: {
@@ -84,8 +100,11 @@ function parseInt(str) {
                             break;
                         case 'canvas':
                             let img = this.images[this.frame - 1];
-                            this.ctx.clearRect( 0, 0, this.__width, this.__height);
-                            this.ctx.drawImage(img, 0, 0, this.__width, this.__height);
+                            if (img.complete) {
+                                this.ctx.clearRect(0, 0, this.__width, this.__height);
+                                this.ctx.drawImage(img, 0, 0, this.__width, this.__height);
+                            }
+
                             break;
                     }
                     this.lastFrame = val;
@@ -149,12 +168,12 @@ function parseInt(str) {
 
         watch: {
             width: function (val, oldVal) {
-                this.__width=parseInt(val);
+                this.__width = parseInt(val);
                 this.canvas.width = this.__width;
                 this.updateFrame(this.frame)
             },
             height: function (val, oldVal) {
-                this.__height=parseInt(val);
+                this.__height = parseInt(val);
                 this.canvas.height = this.__height;
                 this.updateFrame(this.frame)
             }, frame: function (val, oldVal) {
@@ -172,9 +191,14 @@ function parseInt(str) {
         mounted: function () {
             let self = this;
             this.totalFrame = this.frames.length;
+            this.initFrame = Math.max(0, Math.min(this.initFrame, this.totalFrame));
             this.frame = this.initFrame;
-            this.__width=parseInt(this.width);
-            this.__height=parseInt(this.height);
+            this.__width = parseInt(this.width);
+            this.__height = parseInt(this.height);
+
+            if (this.type === 'canvas' && !canvas) {
+                this.type = 'dom'
+            }
 
 
             switch (this.type) {
@@ -187,12 +211,19 @@ function parseInt(str) {
                     this.canvas = this.$refs.canvas;
                     this.canvas.width = this.__width;
                     this.canvas.height = this.__height;
-                    this.ctx = this.canvas.getContext("2d");
+                    if (webgl) {
+                        WebGL2D.enable(this.canvas)
+                        this.ctx = this.canvas.getContext("webgl-2d")
+                    } else {
+                        this.ctx = this.canvas.getContext("2d");
+                    }
+
                     for (let i = 0; i < this.totalFrame; i++) {
                         let img = new Image();
                         img.src = this.frames[i];
                         this.images.push(img)
                     }
+
                     this.images[this.initFrame - 1].onload = function () {
                         if (self.frame === self.initFrame && this.playing !== true) {
                             self.updateFrame(self.initFrame);

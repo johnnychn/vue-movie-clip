@@ -19,6 +19,7 @@
         width: 100%;
         height: 100%;
         font-family: 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', sans-serif;
+        background: black;
 
     }
 
@@ -56,12 +57,33 @@
 <body>
 <div id="app">
     <div class="full">
-        <vue-fix-dom width="640px" height="360px" align="crop">
-            <vue-movie-clip ref="my_movieclip" :auto-play="true" :init-frame="10" width="640px"
-                            height="360px" type="dom" v-show="true" :frame-time="frameTime"
+        <vue-fix-dom  width="640px" height="360px" align="crop">
+            <vue-movie-clip  ref="my_movieclip" :auto-play="true" :init-frame="10" width="320px"
+                            height="180px" type="canvas" v-show="true" :frame-time="frameTime"
                             :frame="frame" :frames="frames"
                             :loop="loop" :forward="forward"
                             @frame="onFrame" @play="onPlay" @stop="onStop">
+            </vue-movie-clip>
+
+            <vue-movie-clip  :auto-play="true" :init-frame="10" width="320px"
+                             height="180px" type="canvas" v-show="true" :frame-time="frameTime"
+                              :frames="frames"
+                             :loop="true" :forward="forward"
+                            style="left:320px;top:0px;position:absolute " >
+            </vue-movie-clip>
+
+            <vue-movie-clip  :auto-play="true" :init-frame="10" width="320px"
+                             height="180px" type="canvas" v-show="true" :frame-time="frameTime"
+                             :frames="frames"
+                             :loop="true" :forward="forward"
+                             style="left:0px;top:180px;position:absolute " >
+            </vue-movie-clip>
+
+            <vue-movie-clip  :auto-play="true" :init-frame="10" width="320px"
+                             height="180px" type="canvas" v-show="true" :frame-time="frameTime"
+                             :frames="frames"
+                             :loop="true" :forward="forward"
+                             style="left:320px;top:180px;position:absolute " >
             </vue-movie-clip>
         </vue-fix-dom>
     </div>
@@ -73,7 +95,7 @@
         <div style="padding-left: 10px;width:110px;">frame:</div>
         <vue-slider style="" ref="slider" :speed="0" v-model="frame" tooltip="hover"
                     @callback="sliderCallback"
-                     :width="360"  :max="frames.length"></vue-slider>
+                     :width="360" :min="1" :max="frames.length"></vue-slider>
     </div>
     <div style="height: 45px;clear: both">
         <div style="padding-left: 10px;width:110px">frameTime:</div>
@@ -100,9 +122,15 @@
     }
 
     let frames = [];
-    for (let i = 1; i < 220; i++) {
+
+    // frames.push('')
+    for (let i = 1; i <= 208; i++) {
         frames.push('img/video/' + PrefixInteger(i, 5) + '.jpg')
+        // frames.push('img/dazhao' + PrefixInteger(i, 1) + '_02.png')
     }
+
+
+    // frames.push('')
 
     new Vue({
         el: '#app',
