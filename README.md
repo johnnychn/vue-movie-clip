@@ -29,10 +29,14 @@ frameTime:Number 50/(1+)
 frames:Array []/['xxx.jpg']
 loop:Number 1/  -1 loop
 forward:Boolean true/false
+render true/false 是否渲染
 ```
 
 ###methods
  ```
+ update() 更新序列帧
+ 
+ 
  play()
  stop()
  skipTo(frame:Number)
